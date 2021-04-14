@@ -4,4 +4,4 @@ Machine learning term project on the quality of Wine
 Dataset Information:
 https://archive.ics.uci.edu/ml/datasets/Wine+Quality
 
-Neville Ingram, Timothy McCarthy, and Garett Ruping
+Neville Ingram, Tim McCarthy, and Garett Ruping
