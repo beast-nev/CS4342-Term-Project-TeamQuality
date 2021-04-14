@@ -1,3 +1,7 @@
 # CS4342-Term-Project
-Final machine learning project
-Neville Ingram and Timothy McCarthy
+
+Machine learning term project on the quality of Wine
+Dataset Information:
+https://archive.ics.uci.edu/ml/datasets/Wine+Quality
+
+Neville Ingram, Timothy McCarthy, and Garett Ruping
