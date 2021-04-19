@@ -13,7 +13,7 @@ def multiple_linear_predictors(file_name):
         y = df['quality']
         x = df[
             ["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide",
-             "total sulfur dioxide", "density", "pH", "sulphates", "alcohol", "quality"]]
+             "total sulfur dioxide", "density", "pH", "sulphates", "alcohol"]]
         sm.add_constant(x)
         model = sm.OLS(y, x).fit()
         print(model.summary())
