@@ -8,7 +8,7 @@ from itertools import combinations
 from sklearn.model_selection import cross_val_score
 
 
-def best_subset(estimator, X, y, max_size=8, cv=5):
+def best_subset_finder(estimator, X, y, max_size=8, cv=5):
 	n_features = X.shape[1]
 	subsets = (combinations(range(n_features), k + 1) for k in range(min(n_features, max_size)))
 
@@ -47,29 +47,38 @@ def decision_tree(f):
 		 "total sulfur dioxide", "density", "pH", "sulphates", "alcohol"]]
 	y = df['quality']
 
-	regr_1 = tree.DecisionTreeRegressor(max_depth=2)
-	regr_2 = tree.DecisionTreeRegressor(max_depth=5)
+	best_depth, best_tree, best_score, best_subset = 0, None, 0, None
 
-	best_sub, best_score, best_size_subset, list_scores = best_subset(regr_1, X, y, max_size=11, cv=5)
+	depth = 4
+	tree_reg = tree.DecisionTreeRegressor(max_depth=depth)
 
-	print("The best subset of predictors for the decision tree was " + str(best_sub))
+	sub, score, _, _ = best_subset_finder(tree_reg, X, y, max_size=11, cv=5)
+
+	if score > best_score:
+		best_depth, best_tree, best_score, best_subset = depth, tree_reg, score, sub
+
+	print("The best depth was " + str(best_depth))
+	print("The best subset of predictors for the decision tree was " + str(best_subset))
 	print("The accuracy score was " + str(best_score))
-	predictors = df.iloc[:, list(best_sub)]
-	regr_1.fit(predictors, y)
+	predictors = df.iloc[:, list(best_subset)]
+
+	tree_reg.fit(predictors, y)
+
+	start = [predictors.min().iloc[index] for index, col in enumerate(predictors)]
+	stop = [predictors.max().iloc[index] for index, col in enumerate(predictors)]
+	X_test = np.linspace(stop, start, 200)
+	y_test = tree_reg.predict(X_test)
 
 	for index, col in enumerate(predictors):
-		print(col)
-		X_test = np.arange(predictors.min().iloc[index], predictors.max().iloc[index], 0.01)[:, np.newaxis]
-		y_test = regr_1.predict(X_test)
-
 		plt.figure()
 		plt.scatter(predictors.iloc[:, index], y, s=20, edgecolor="black", c="darkorange", label="data")
-		plt.plot(X_test, y_test, color="cornflowerblue", label="max_depth=2", linewidth=2)
+		plt.plot(X_test[:, index], y_test, color="cornflowerblue", label="max_depth=2", linewidth=2)
 		plt.xlabel(col)
 		plt.ylabel("quality")
 		plt.title("Decision Tree Regression")
 		plt.legend()
 		plt.show()
+
 
 if __name__ == "__main__":
 	decision_tree('winequality-red.csv')
