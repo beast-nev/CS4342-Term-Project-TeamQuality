@@ -17,7 +17,12 @@ def multiple_linear_predictors(file_name):
              "total sulfur dioxide", "density", "pH", "sulphates", "alcohol"]]
         sm.add_constant(x)
         model = sm.OLS(y, x).fit()
+        yhat = model.predict(x)
+        print("Confusion matrix: ", confusion_matrix(y, list(map(round, yhat))))
+        print("Accuracy score: ", accuracy_score(y, list(map(round, yhat))))
+        sm.graphics.influence_plot(model)
         print(model.summary())
+        plt.show()
 
 
 def single_linear_predictors(file_name):
@@ -61,10 +66,11 @@ def single_linear_predictors(file_name):
             # fit model
             model = sm.OLS(y_train, x_train).fit()
             print(model.summary())
-            # todo: run on test data
+            # todo: replace predict on test data
             yhat = model.predict(x_train)
             print("Confusion matrix: ", confusion_matrix(y_train, list(map(round, yhat))))
             print("Accuracy score: ", accuracy_score(y_train, list(map(round, yhat))))
+            sm.graphics.influence_plot(model)
 
             # setup regression line info
             p = model.params
@@ -78,6 +84,6 @@ def single_linear_predictors(file_name):
 
 
 if __name__ == "__main__":
-    # multiple_linear_predictors('winequality-red.csv')
-    single_linear_predictors('winequality-red.csv')
+    multiple_linear_predictors('winequality-red.csv')
+    # single_linear_predictors('winequality-red.csv')
     # single_linear_predictors('winequality-white.csv')
