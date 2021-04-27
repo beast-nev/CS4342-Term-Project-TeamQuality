@@ -59,10 +59,10 @@ def decision_tree(f):
 			best_depth, best_tree, best_score, best_subset = depth, tree_reg, score, sub
 
 	# print data
-	print("The best depth was " + str(best_depth))
-	print("The best subset of predictors for the decision tree was " + str(best_subset))
-	print("The accuracy score was " + str(best_score))
 	predictors = df.iloc[:, list(best_subset)]
+	print("The best depth was " + str(best_depth))
+	print("The best subset of predictors for the decision tree were " + str([col for index, col in enumerate(predictors)]))
+	print("The accuracy score was " + str(best_score))
 
 	# fit regression with best predictors
 	tree_reg.fit(predictors, y)
@@ -86,4 +86,5 @@ def decision_tree(f):
 
 
 if __name__ == "__main__":
-	decision_tree('winequality-red.csv')
+	decision_tree('winequality-white.csv')
+	# decision_tree('winequality-red.csv')
