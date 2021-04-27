@@ -41,7 +41,6 @@ def best_subset_finder(estimator, X, y, max_size=8, cv=5):
 
 def decision_tree(f):
 	df = pd.read_csv(f, sep=";")
-	# these predictors chosen based off
 	X = df[
 		["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide",
 		 "total sulfur dioxide", "density", "pH", "sulphates", "alcohol"]]
@@ -49,30 +48,36 @@ def decision_tree(f):
 
 	best_depth, best_tree, best_score, best_subset = 0, None, 0, None
 
-	depth = 4
-	tree_reg = tree.DecisionTreeRegressor(max_depth=depth)
+	for depth in range(2, 7):
+		# build tree with iterative depth
+		tree_reg = tree.DecisionTreeRegressor(max_depth=depth)
 
-	sub, score, _, _ = best_subset_finder(tree_reg, X, y, max_size=11, cv=5)
+		# find best combo of predictors using best subset
+		sub, score, _, _ = best_subset_finder(tree_reg, X, y, max_size=11, cv=5)
 
-	if score > best_score:
-		best_depth, best_tree, best_score, best_subset = depth, tree_reg, score, sub
+		if score > best_score:
+			best_depth, best_tree, best_score, best_subset = depth, tree_reg, score, sub
 
+	# print data
 	print("The best depth was " + str(best_depth))
 	print("The best subset of predictors for the decision tree was " + str(best_subset))
 	print("The accuracy score was " + str(best_score))
 	predictors = df.iloc[:, list(best_subset)]
 
+	# fit regression with best predictors
 	tree_reg.fit(predictors, y)
 
+	# generate decision tree line for graph
 	start = [predictors.min().iloc[index] for index, col in enumerate(predictors)]
 	stop = [predictors.max().iloc[index] for index, col in enumerate(predictors)]
-	X_test = np.linspace(stop, start, 200)
-	y_test = tree_reg.predict(X_test)
+	X_tree = np.linspace(stop, start, 200)
+	y_tree = tree_reg.predict(X_tree)
 
+	# graph each predictor vs quality and the predicted decision
 	for index, col in enumerate(predictors):
 		plt.figure()
 		plt.scatter(predictors.iloc[:, index], y, s=20, edgecolor="black", c="darkorange", label="data")
-		plt.plot(X_test[:, index], y_test, color="cornflowerblue", label="max_depth=2", linewidth=2)
+		plt.plot(X_tree[:, index], y_tree, color="cornflowerblue", label="max_depth=2", linewidth=2)
 		plt.xlabel(col)
 		plt.ylabel("quality")
 		plt.title("Decision Tree Regression")
