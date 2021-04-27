@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import statsmodels.api as sm
+from sklearn.metrics import confusion_matrix, accuracy_score
 from sklearn.model_selection import train_test_split, cross_val_score, cross_validate
 from sklearn import svm
 
@@ -56,9 +57,14 @@ def single_linear_predictors(file_name):
             print("Scores from cross validation: \n", scores)
             print("Average cross validation score: ", scores.mean())
 
+
             # fit model
             model = sm.OLS(y_train, x_train).fit()
             print(model.summary())
+            # todo: run on test data
+            yhat = model.predict(x_train)
+            print("Confusion matrix: ", confusion_matrix(y_train, list(map(round, yhat))))
+            print("Accuracy score: ", accuracy_score(y_train, list(map(round, yhat))))
 
             # setup regression line info
             p = model.params
@@ -72,6 +78,6 @@ def single_linear_predictors(file_name):
 
 
 if __name__ == "__main__":
-    multiple_linear_predictors('winequality-red.csv')
-    # single_linear_predictors('winequality-red.csv')
+    # multiple_linear_predictors('winequality-red.csv')
+    single_linear_predictors('winequality-red.csv')
     # single_linear_predictors('winequality-white.csv')
