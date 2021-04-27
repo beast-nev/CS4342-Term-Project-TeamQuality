@@ -1,0 +1,75 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import statsmodels.api as sm
+from sklearn import tree
+from itertools import combinations
+from sklearn.model_selection import cross_val_score
+
+
+def best_subset(estimator, X, y, max_size=8, cv=5):
+	n_features = X.shape[1]
+	subsets = (combinations(range(n_features), k + 1) for k in range(min(n_features, max_size)))
+
+	best_size_subset = []
+	for subsets_k in subsets:  # for each list of subsets of the same size
+		best_score = -np.inf
+		best_subset = None
+		for subset in subsets_k:  # for each subset
+			estimator.fit(X.iloc[:, list(subset)], y)
+			# get the subset with the best score among subsets of the same size
+			score = estimator.score(X.iloc[:, list(subset)], y)
+			if score > best_score:
+				best_score, best_subset = score, subset
+		# to compare subsets of different sizes we must use CV
+		# first store the best subset of each size
+		best_size_subset.append(best_subset)
+
+	# compare best subsets of each size
+	best_score = -np.inf
+	best_subset = None
+	list_scores = []
+	for subset in best_size_subset:
+		score = cross_val_score(estimator, X.iloc[:, list(subset)], y, cv=cv).mean()
+		list_scores.append(score)
+		if score > best_score:
+			best_score, best_subset = score, subset
+
+	return best_subset, best_score, best_size_subset, list_scores
+
+
+def decision_tree(f):
+	df = pd.read_csv(f, sep=";")
+	# these predictors chosen based off
+	X = df[
+		["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide",
+		 "total sulfur dioxide", "density", "pH", "sulphates", "alcohol"]]
+	y = df['quality']
+
+	regr_1 = tree.DecisionTreeRegressor(max_depth=2)
+	regr_2 = tree.DecisionTreeRegressor(max_depth=5)
+
+	best_sub, best_score, best_size_subset, list_scores = best_subset(regr_1, X, y, max_size=11, cv=5)
+
+	print("The best subset of predictors for the decision tree was " + str(best_sub))
+	print("The accuracy score was " + str(best_score))
+	predictors = df.iloc[:, list(best_sub)]
+	regr_1.fit(predictors, y)
+
+	for index, col in enumerate(predictors):
+		print(col)
+		X_test = np.arange(predictors.min().iloc[index], predictors.max().iloc[index], 0.01)[:, np.newaxis]
+		y_test = regr_1.predict(X_test)
+
+		plt.figure()
+		plt.scatter(predictors.iloc[:, index], y, s=20, edgecolor="black", c="darkorange", label="data")
+		plt.plot(X_test, y_test, color="cornflowerblue", label="max_depth=2", linewidth=2)
+		plt.xlabel(col)
+		plt.ylabel("quality")
+		plt.title("Decision Tree Regression")
+		plt.legend()
+		plt.show()
+
+if __name__ == "__main__":
+	decision_tree('winequality-red.csv')
