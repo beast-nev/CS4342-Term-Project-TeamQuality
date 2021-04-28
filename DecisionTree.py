@@ -7,7 +7,7 @@ from sklearn import tree
 from itertools import combinations
 from sklearn.model_selection import cross_val_score
 
-
+# https://nbviewer.jupyter.org/github/pedvide/ISLR_Python/blob/master/Chapter6_Linear_Model_Selection_and_Regularization.ipynb#6.5.1-Best-Subset-Selection
 def best_subset_finder(estimator, X, y, max_size=8, cv=5):
 	n_features = X.shape[1]
 	subsets = (combinations(range(n_features), k + 1) for k in range(min(n_features, max_size)))
@@ -86,5 +86,5 @@ def decision_tree(f):
 
 
 if __name__ == "__main__":
-	decision_tree('winequality-white.csv')
-	# decision_tree('winequality-red.csv')
+	# decision_tree('winequality-white.csv')
+	decision_tree('winequality-red.csv')
