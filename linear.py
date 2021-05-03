@@ -17,6 +17,7 @@ def multiple_linear_predictors(file_name):
              "total sulfur dioxide", "density", "pH", "sulphates", "alcohol"]]
         sm.add_constant(x)
         model = sm.OLS(y, x).fit()
+        # todo: replace with test set
         yhat = model.predict(x)
         print("Confusion matrix: ", confusion_matrix(y, list(map(round, yhat))))
         print("Accuracy score: ", accuracy_score(y, list(map(round, yhat))))
@@ -66,11 +67,11 @@ def single_linear_predictors(file_name):
             # fit model
             model = sm.OLS(y_train, x_train).fit()
             print(model.summary())
-            # todo: replace predict on test data
+            # todo: replace predict on test set
             yhat = model.predict(x_train)
             print("Confusion matrix: ", confusion_matrix(y_train, list(map(round, yhat))))
             print("Accuracy score: ", accuracy_score(y_train, list(map(round, yhat))))
-            sm.graphics.influence_plot(model)
+            # sm.graphics.influence_plot(model)
 
             # setup regression line info
             p = model.params
@@ -80,10 +81,11 @@ def single_linear_predictors(file_name):
             ax = df.plot(x=col, y='quality', kind='scatter')
             # plot regression line using params
             ax.plot(reg_line_values, p[0] + p[1] * reg_line_values, color='r')
-            plt.show()
+            # plt.show()
 
 
 if __name__ == "__main__":
     multiple_linear_predictors('winequality-red.csv')
+    # multiple_linear_predictors('winequality-white.csv')
     # single_linear_predictors('winequality-red.csv')
     # single_linear_predictors('winequality-white.csv')
