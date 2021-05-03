@@ -18,3 +18,4 @@ def ridge(file_name):
 
 if __name__ == "__main__":
     ridge('winequality-white.csv')
+    ridge('winequality-red.csv')

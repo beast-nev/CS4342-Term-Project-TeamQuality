@@ -12,15 +12,16 @@ def multiple_linear_predictors(file_name):
     with open(file_name) as f:
         df = pd.read_csv(f, sep=";")
         y = df['quality']
-        x = df[
+        X = df[
             ["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide",
              "total sulfur dioxide", "density", "pH", "sulphates", "alcohol"]]
-        sm.add_constant(x)
-        model = sm.OLS(y, x).fit()
-        # todo: replace with test set
-        yhat = model.predict(x)
-        print("Confusion matrix: ", confusion_matrix(y, list(map(round, yhat))))
-        print("Accuracy score: ", accuracy_score(y, list(map(round, yhat))))
+        X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
+
+        sm.add_constant(X_train)
+        model = sm.OLS(y_train, X_train).fit()
+        yhat = model.predict(X_test)
+        print("Confusion matrix: ", confusion_matrix(y_test, list(map(round, yhat))))
+        print("Accuracy score: ", accuracy_score(y_test, list(map(round, yhat))))
         sm.graphics.influence_plot(model)
         print(model.summary())
         plt.show()

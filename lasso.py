@@ -18,3 +18,4 @@ def lasso(file_name):
 
 if __name__ == "__main__":
     lasso('winequality-white.csv')
+    lasso('winequality-red.csv')
