@@ -17,6 +17,7 @@ def single_linear_predictors(file_name):
 			cmap=sns.diverging_palette(20, 220, n=200),
 			square=True
 		)
+		plt.title("Correlation Matrix of Red Wine Predictors")
 		plt.show()
 
 		# iterate through each predictor
@@ -53,5 +54,5 @@ def single_linear_predictors(file_name):
 
 
 if __name__ == "__main__":
-	# single_predictors('winequality-red.csv')
-	single_linear_predictors('winequality-white.csv')
+	single_linear_predictors('winequality-red.csv')
+	# single_linear_predictors('winequality-white.csv')
