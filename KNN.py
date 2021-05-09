@@ -22,4 +22,4 @@ def find_knn(file_name):
 
 if __name__ == "__main__":
     find_knn('winequality-red.csv')
-    # find_knn('winequality-white.csv')
+    find_knn('winequality-white.csv')
