@@ -1,23 +1,25 @@
 import pandas as pd
 import statsmodels.api as sm
-from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import cross_val_score
 
 
-def knn(file_name):
+def find_knn(file_name):
     with open(file_name) as f:
         df = pd.read_csv(f, sep=";")
         y = df['quality']
         X = df[["volatile acidity", "sulphates", "alcohol"]]
         X = sm.add_constant(X)
-        X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
-        knn = KNeighborsClassifier()
-        knn.fit(X_train, y_train)
-        print('Accuracy of K-NN classifier on training set: {:.2f}'
-              .format(knn.score(X_train, y_train)))
-        print('Accuracy of K-NN classifier on test set: {:.2f}'
-              .format(knn.score(X_test, y_test)))
+        best_score, best_model, best_k = 0, None, 0
+        for k in range(1, 101):
+            knn = KNeighborsClassifier(n_neighbors=k)
+            score = cross_val_score(knn, X, y).mean()
+            if score > best_score:
+                best_score, best_model, best_k = score, knn, k
+
+        print("Best KNN k={}, cross validation score: {:.4f}".format(best_k, best_score))
 
 
 if __name__ == "__main__":
-    knn('winequality-white.csv')
+    find_knn('winequality-red.csv')
+    # find_knn('winequality-white.csv')
