@@ -1,8 +1,6 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
-import statsmodels.api as sm
 from sklearn import tree
 from itertools import combinations
 from sklearn.model_selection import cross_val_score
@@ -65,26 +63,30 @@ def decision_tree(f):
 	print("The accuracy score was " + str(best_score))
 
 	# fit regression with best predictors
-	tree_reg.fit(predictors, y)
+	best_tree.fit(predictors, y)
+
+	plt.figure(figsize=(5,5), dpi=1000)
+	tree.plot_tree(best_tree, filled=True, proportion=False, feature_names=best_subset)
+	plt.show()
 
 	# generate decision tree line for graph
 	start = [predictors.min().iloc[index] for index, col in enumerate(predictors)]
 	stop = [predictors.max().iloc[index] for index, col in enumerate(predictors)]
 	X_tree = np.linspace(stop, start, 200)
-	y_tree = tree_reg.predict(X_tree)
+	y_tree = best_tree.predict(X_tree)
 
 	# graph each predictor vs quality and the predicted decision
 	for index, col in enumerate(predictors):
 		plt.figure()
 		plt.scatter(predictors.iloc[:, index], y, s=20, edgecolor="black", c="darkorange", label="data")
-		plt.plot(X_tree[:, index], y_tree, color="cornflowerblue", label="max_depth=2", linewidth=2)
+		plt.plot(X_tree[:, index], y_tree, color="cornflowerblue", label="max_depth={}".format(best_depth), linewidth=2)
 		plt.xlabel(col)
-		plt.ylabel("quality")
+		plt.ylabel("Quality")
 		plt.title("Decision Tree Regression")
 		plt.legend()
 		plt.show()
 
 
 if __name__ == "__main__":
-	# decision_tree('winequality-white.csv')
-	decision_tree('winequality-red.csv')
+	decision_tree('winequality-white.csv')
+	# decision_tree('winequality-red.csv')
