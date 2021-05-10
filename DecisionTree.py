@@ -46,7 +46,7 @@ def decision_tree(f):
 
 	best_depth, best_tree, best_score, best_subset = 0, None, 0, None
 
-	for depth in range(2, 7):
+	for depth in range(2, 6):
 		# build tree with iterative depth
 		tree_reg = tree.DecisionTreeRegressor(max_depth=depth)
 
@@ -58,6 +58,7 @@ def decision_tree(f):
 
 	# print data
 	predictors = df.iloc[:, list(best_subset)]
+	col_names = [col for col in predictors]
 	print("The best depth was " + str(best_depth))
 	print("The best subset of predictors for the decision tree were " + str([col for index, col in enumerate(predictors)]))
 	print("The accuracy score was " + str(best_score))
@@ -65,8 +66,8 @@ def decision_tree(f):
 	# fit regression with best predictors
 	best_tree.fit(predictors, y)
 
-	plt.figure(figsize=(5,5), dpi=1000)
-	tree.plot_tree(best_tree, filled=True, proportion=False, feature_names=best_subset)
+	plt.figure(figsize=(10, 10))
+	tree.plot_tree(best_tree, filled=True, proportion=False, feature_names=col_names, fontsize=9)
 	plt.show()
 
 	# generate decision tree line for graph
@@ -88,5 +89,5 @@ def decision_tree(f):
 
 
 if __name__ == "__main__":
-	decision_tree('winequality-white.csv')
-	# decision_tree('winequality-red.csv')
+	# decision_tree('winequality-white.csv')
+	decision_tree('winequality-red.csv')
