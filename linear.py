@@ -7,6 +7,7 @@ from sklearn.model_selection import train_test_split, cross_val_score, cross_val
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import MinMaxScaler, PolynomialFeatures
 from sklearn import svm
+from sklearn.base import BaseEstimator, RegressorMixin
 
 
 def multiple_linear_predictors(file_name):
@@ -19,6 +20,7 @@ def multiple_linear_predictors(file_name):
         sm.add_constant(x)
         model = sm.OLS(y, x).fit()
         print(model.summary())
+
 
 def multiple_smallp_linear(file_name):
     with open(file_name) as f:
@@ -36,6 +38,7 @@ def multiple_smallp_linear(file_name):
 
         lin_reg = sm.OLS(y_train, X_train).fit()
         print(lin_reg.summary())
+
 
 def multiple_smallp_logistic(file_name):
     with open(file_name) as f:
@@ -56,6 +59,7 @@ def multiple_smallp_logistic(file_name):
         print('Accuracy of Logistic regression classifier on test set: {:.2f}'
               .format(logreg.score(X_test, y_test)))
         # print(log_reg.predict(X_test))
+
 
 def smallp_linear_winteractive(file_name):
     with open(file_name) as f:
@@ -78,6 +82,8 @@ def smallp_linear_winteractive(file_name):
 
         lin_reg = sm.OLS(y_train, X_train).fit()
         print(lin_reg.summary())
+
+
 def polynomial_features(file_name):
     with open(file_name) as f:
         df = pd.read_csv(f, sep=";")
@@ -87,13 +93,38 @@ def polynomial_features(file_name):
         X = sm.add_constant(X)
 
         # poly = PolynomialFeatures(2)
-        poly = PolynomialFeatures(interaction_only=True)
+        poly = PolynomialFeatures(2)
         X = poly.fit_transform(X)
 
         X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
 
-        lin_reg = sm.OLS(y_train, X_train).fit()
-        print(lin_reg.summary())
+        lin_reg = sm.OLS(y_train, X_train)
+        print(lin_reg.fit().summary())
+        scores = cross_val_score(SMWrapper(sm.OLS), X_train, y_train, cv=3)
+        print("Scores from cross validation: \n", scores)
+        print("Average cross validation score: ", scores.mean())
+
+
+# from : https://stackoverflow.com/questions/41045752/using-statsmodel-estimations-with-scikit-learn-cross-validation
+# -is-it-possible
+class SMWrapper(BaseEstimator, RegressorMixin):
+    """ A universal sklearn-style wrapper for statsmodels regressors """
+
+    def __init__(self, model_class, fit_intercept=True):
+        self.model_class = model_class
+        self.fit_intercept = fit_intercept
+
+    def fit(self, X, y):
+        if self.fit_intercept:
+            X = sm.add_constant(X)
+        self.model_ = self.model_class(y, X)
+        self.results_ = self.model_.fit()
+
+    def predict(self, X):
+        if self.fit_intercept:
+            X = sm.add_constant(X)
+        return self.results_.predict(X)
+
 
 def single_linear_predictors(file_name):
     with open(file_name) as f:
@@ -148,10 +179,12 @@ def single_linear_predictors(file_name):
 
 
 if __name__ == "__main__":
-    #multiple_smallp_predictors('winequality-red.csv')
-    #single_linear_predictors('winequality-red.csv')
+    # multiple_smallp_predictors('winequality-red.csv')
+    # single_linear_predictors('winequality-red.csv')
     # single_linear_predictors('winequality-white.csv')
-    #multiple_smallp_logistic('winequality-red.csv')
-    #multiple_smallp_linear('winequality-red.csv')
-    #smallp_linear_winteractive('winequality-red.csv')
+    multiple_smallp_logistic('winequality-red.csv')
+    multiple_smallp_logistic('winequality-white.csv')
+    # multiple_smallp_linear('winequality-red.csv')
+    # smallp_linear_winteractive('winequality-red.csv')
     polynomial_features('winequality-red.csv')
+    polynomial_features('winequality-white.csv')
