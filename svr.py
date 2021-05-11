@@ -10,18 +10,10 @@ def svr(file_name):
     with open(file_name) as f:
         df = pd.read_csv(f, sep=";")
         y = df['quality']
-<<<<<<< HEAD
-        X = df[["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide",
-             "total sulfur dioxide", "density", "pH", "sulphates", "alcohol"]]
-        X = sm.add_constant(X)
-        X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
-        regr = make_pipeline(StandardScaler(), SVR())
-=======
         X = df[["volatile acidity", "sulphates", "alcohol"]]
         X = sm.add_constant(X)
         X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
         regr = make_pipeline(StandardScaler(), SVR(C=1.0, epsilon=0.2))
->>>>>>> 2765857ae5397cc60b5d5d4fb86d0135ade4c397
         regr.fit(X_train, y_train)
         print('Accuracy of SVR on training set: {:.2f}'
               .format(regr.score(X_train, y_train)))

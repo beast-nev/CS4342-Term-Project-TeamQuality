@@ -13,10 +13,12 @@ def qda(file_name):
         clf = QuadraticDiscriminantAnalysis()
         clf.fit(X_train, y_train)
 
-        print('Accuracy of K-NN classifier on training set: {:.2f}'
+        print('Accuracy of QDA classifier on training set: {:.2f}'
               .format(clf.score(X_train, y_train)))
-        print('Accuracy of K-NN classifier on test set: {:.2f}'
+        print('Accuracy of QDA classifier on test set: {:.2f}'
               .format(clf.score(X_test, y_test)))
+
+
 def qdaAll(file_name):
     with open(file_name) as f:
         df = pd.read_csv(f, sep=";")
@@ -28,10 +30,13 @@ def qdaAll(file_name):
         clf = QuadraticDiscriminantAnalysis()
         clf.fit(X_train, y_train)
 
-        print('Accuracy of K-NN classifier on training set: {:.2f}'
+        print('Accuracy of QDA classifier on training set: {:.2f}'
               .format(clf.score(X_train, y_train)))
-        print('Accuracy of K-NN classifier on test set: {:.2f}'
+        print('Accuracy of QDA classifier on test set: {:.2f}'
               .format(clf.score(X_test, y_test)))
 
+
 if __name__ == "__main__":
-    qdaAll('winequality-white.csv')
+    # qdaAll('winequality-white.csv')
+    qda('winequality-white.csv')
+    qda('winequality-red.csv')
