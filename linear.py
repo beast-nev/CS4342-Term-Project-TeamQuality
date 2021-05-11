@@ -129,8 +129,6 @@ class SMWrapper(BaseEstimator, RegressorMixin):
 def single_linear_predictors(file_name):
     with open(file_name) as f:
         df = pd.read_csv(f, sep=";")
-
-        # plot correlation matrix
         corr = df.corr()
         ax = sns.heatmap(
             corr,
@@ -138,6 +136,7 @@ def single_linear_predictors(file_name):
             cmap=sns.diverging_palette(20, 220, n=200),
             square=True
         )
+        plt.title("Correlation Matrix of Red Wine Predictors")
         plt.show()
 
         # iterate through each predictor
@@ -188,3 +187,5 @@ if __name__ == "__main__":
     # smallp_linear_winteractive('winequality-red.csv')
     polynomial_features('winequality-red.csv')
     polynomial_features('winequality-white.csv')
+    single_linear_predictors('winequality-red.csv')
+    # single_linear_predictors('winequality-white.csv')
